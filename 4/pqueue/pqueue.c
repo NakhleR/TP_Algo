@@ -42,6 +42,10 @@ pqueue *pqueue_empty(int (*compar)(const void *, const void *)) {
   q->capacity = CAPACITY_MIN;
   q->length = 0;
   q->aref = malloc(CAPACITY_MIN * sizeof *(q->aref));
+  if (q->aref == nullptr) {
+    free(q);
+    return nullptr;
+  }
   return q;
 }
 
