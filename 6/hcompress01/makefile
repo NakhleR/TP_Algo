@@ -1,0 +1,26 @@
+CC = gcc
+CFLAGS = -std=c2x \
+  -Wall -Wconversion -Werror -Wextra -Wpedantic -Wwrite-strings \
+  -O2
+objects = hcompress01.o
+executable = hcompress01
+makefile_indicator = .\#makefile\#
+
+.PHONY: all clean
+
+all: $(executable)
+
+clean:
+	$(RM) $(objects) $(executable)
+	@$(RM) $(makefile_indicator)
+
+$(executable): $(objects)
+	$(CC) $(objects) -o $(executable)
+
+hcompress01.o: hcompress01.c
+
+include $(makefile_indicator)
+
+$(makefile_indicator): makefile
+	@touch $@
+	@$(RM) $(objects) $(executable)
