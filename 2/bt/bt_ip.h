@@ -2,9 +2,9 @@
 
 //  bt_comb_left : temps et espace au plus linéaires en n.
 
-//  bt_comb_right : ...
+//  bt_comb_right : temps et espace au plus linéaires en n.
 
-//  bt_random : ...
+//  bt_random : temps et espace au plus linéaires en n.
 
 //  bt_dispose : temps linéaire en la taille de l'arbre associé à *tptr ;
 //    espace linéaire en la hauteur de l'arbre associé à *tptr.
@@ -12,15 +12,22 @@
 //  bt_size, bt_height, bt_distance : temps linéaire en la taille de l'arbre
 //    associé à t ; espace linéaire en la hauteur de l'arbre associé à t.
 
-//  bt_is_skinny, bt_is_comb_left, bt_is_comb_right : ...
+//  bt_is_skinny, bt_is_comb_left, bt_is_comb_right : temps au plus linéaire
+//    en la taille de l'arbre associé à t ; espace au plus linéaire en la
+//    hauteur de l'arbre associé à t.
 
-//  bt_is_similar : ...
+//  bt_is_similar : temps au plus linéaire en le minimum des tailles des
+//    arbres associés à t1 et t2 ; espace au plus linéaire en le minimum des
+//    hauteurs des arbres associés à t1 et t2.
 
 //  bt_repr_formal : temps linéaire en la taille de l'arbre associé à t ; espace
 //    linéaire en la hauteur de l'arbre associé à t.
 
-//  bt_repr_lukas : ...
+//  bt_repr_lukas : temps linéaire en la taille de l'arbre associé à t ;
+//    espace linéaire en la hauteur de l'arbre associé à t.
 
-//  bt_repr_subtree : ...
+//  bt_repr_subtree : temps linéaire en la taille de l'arbre associé à t ;
+//    espace linéaire en la hauteur de l'arbre associé à t.
 
-//  bt_repr_graphic : ...
+//  bt_repr_graphic : temps linéaire en la taille de l'arbre associé à t ;
+//    espace linéaire en la hauteur de l'arbre associé à t.

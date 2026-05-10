@@ -41,7 +41,7 @@ int main() {
   {
     bt *t = nullptr;
     INITIALIZE(t, bt_comb_left, SIZE);
-    //DISPLAY_VOID(t, bt_repr_graphic, "\n");
+    DISPLAY_VOID(t, bt_repr_graphic, "\n");
     DISPLAY_VOID(t, bt_repr_formal, );
     DISPLAY_SIZE_T(t, bt_size);
     DISPLAY_SIZE_T(t, bt_height);
@@ -50,28 +50,28 @@ int main() {
   }
   {
     bt *t = nullptr;
-    //INITIALIZE(t, bt_comb_right, SIZE);
-    //DISPLAY_VOID(t, bt_repr_graphic, "\n");
-    //DISPLAY_VOID(t, bt_repr_formal, );
-    //DISPLAY_SIZE_T(t, bt_size);
-    //DISPLAY_SIZE_T(t, bt_height);
-    //DISPLAY_SIZE_T(t, bt_distance);
+    INITIALIZE(t, bt_comb_right, SIZE);
+    DISPLAY_VOID(t, bt_repr_graphic, "\n");
+    DISPLAY_VOID(t, bt_repr_formal, );
+    DISPLAY_SIZE_T(t, bt_size);
+    DISPLAY_SIZE_T(t, bt_height);
+    DISPLAY_SIZE_T(t, bt_distance);
     bt_dispose(&t);
   }
   {
     for (int k = 0; k < RANDOM_TIMES; ++k) {
       bt *t = nullptr;
-      //INITIALIZE(t, bt_random, SIZE);
-      //DISPLAY_VOID(t, bt_repr_graphic, "\n");
-      //DISPLAY_VOID(t, bt_repr_formal, );
-      //DISPLAY_VOID(t, bt_repr_lukas, );
-      //DISPLAY_VOID(t, bt_repr_subtrees, );
-      //DISPLAY_SIZE_T(t, bt_size);
-      //DISPLAY_SIZE_T(t, bt_height);
-      //DISPLAY_SIZE_T(t, bt_distance);
-      //DISPLAY_BOOL(t, bt_is_skinny);
-      //DISPLAY_BOOL(t, bt_is_comb_left);
-      //DISPLAY_BOOL(t, bt_is_comb_right);
+      INITIALIZE(t, bt_random, SIZE);
+      DISPLAY_VOID(t, bt_repr_graphic, "\n");
+      DISPLAY_VOID(t, bt_repr_formal, );
+      DISPLAY_VOID(t, bt_repr_lukas, );
+      DISPLAY_VOID(t, bt_repr_subtrees, );
+      DISPLAY_SIZE_T(t, bt_size);
+      DISPLAY_SIZE_T(t, bt_height);
+      DISPLAY_SIZE_T(t, bt_distance);
+      DISPLAY_BOOL(t, bt_is_skinny);
+      DISPLAY_BOOL(t, bt_is_comb_left);
+      DISPLAY_BOOL(t, bt_is_comb_right);
       bt_dispose(&t);
     }
   }
@@ -79,11 +79,11 @@ int main() {
     for (size_t k = 0; k < SIMILAR_TIMES; ++k) {
       bt *t1 = nullptr;
       bt *t2 = nullptr;
-      //INITIALIZE(t1, bt_random, k);
-      //INITIALIZE(t2, bt_random, k);
-      //DISPLAY_VOID(t1, bt_repr_graphic, "\n");
-      //DISPLAY_VOID(t2, bt_repr_graphic, "\n");
-      //DISPLAY_BOOL2(t1, t2, bt_is_similar);
+      INITIALIZE(t1, bt_random, k);
+      INITIALIZE(t2, bt_random, k);
+      DISPLAY_VOID(t1, bt_repr_graphic, "\n");
+      DISPLAY_VOID(t2, bt_repr_graphic, "\n");
+      DISPLAY_BOOL2(t1, t2, bt_is_similar);
       bt_dispose(&t1);
       bt_dispose(&t2);
     }
