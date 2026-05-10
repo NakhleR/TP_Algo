@@ -71,15 +71,72 @@ static void cbst__dispose(cbst *p) {
   }
 }
 
-//  ICI, PROCHAINEMENT, LES SPÉCIFICATIONS ET DÉFINITIONS DE :
-//    static void *cbst__add_endofpath(cbst **pp, const void *ref,
-//        int (*compar)(const void *, const void *));
-//    static void *cbst__remove_max(cbst **pp);
-//    static void cbst__remove_root(cbst **pp);
-//    static void *cbst__remove_climbup_left(cbst **pp, const void *ref,
-//        int (*compar)(const void *, const void *));
-//    static void *cbst__search(const cbst *p, const void *ref,
-//        int (*compar)(const void *, const void *));
+static void *cbst__search(const cbst *p, const void *ref,
+    int (*compar)(const void *, const void *)) {
+  while (!IS_EMPTY(p)) {
+    int c = compar(ref, REF(p));
+    if (c == 0) {
+      return (void *) REF(p);
+    }
+    p = NEXT(p, c);
+  }
+  return nullptr;
+}
+
+static void *cbst__add_endofpath(cbst **pp, const void *ref,
+    int (*compar)(const void *, const void *)) {
+  if (IS_EMPTY(*pp)) {
+    cbst *p = malloc(sizeof *p);
+    if (p == nullptr) {
+      return nullptr;
+    }
+    LEFT(p) = EMPTY();
+    RIGHT(p) = EMPTY();
+    REF(p) = ref;
+    *pp = p;
+    return (void *) ref;
+  }
+  int c = compar(ref, REF(*pp));
+  if (c == 0) {
+    return (void *) REF(*pp);
+  }
+  return cbst__add_endofpath(&NEXT(*pp, c), ref, compar);
+}
+
+static void *cbst__remove_max(cbst **pp) {
+  if (!IS_EMPTY(RIGHT(*pp))) {
+    return cbst__remove_max(&RIGHT(*pp));
+  }
+  cbst *p = *pp;
+  const void *r = REF(p);
+  *pp = LEFT(p);
+  free(p);
+  return (void *) r;
+}
+
+static void cbst__remove_root(cbst **pp) {
+  cbst *p = *pp;
+  if (IS_EMPTY(LEFT(p))) {
+    *pp = RIGHT(p);
+    free(p);
+    return;
+  }
+  REF(p) = cbst__remove_max(&LEFT(p));
+}
+
+static void *cbst__remove_climbup_left(cbst **pp, const void *ref,
+    int (*compar)(const void *, const void *)) {
+  if (IS_EMPTY(*pp)) {
+    return nullptr;
+  }
+  int c = compar(ref, REF(*pp));
+  if (c == 0) {
+    const void *r = REF(*pp);
+    cbst__remove_root(pp);
+    return (void *) r;
+  }
+  return cbst__remove_climbup_left(&NEXT(*pp, c), ref, compar);
+}
 
 //  ICI, PROCHAINEMENT, LES SPÉCIFICATIONS ET DÉFINITIONS DE :
 //    static size_t cbst__number(const cbst *p, const void *ref,
@@ -89,9 +146,18 @@ static void cbst__dispose(cbst *p) {
 
 #define REPR__TAB 4
 
-//  ICI, PROCHAINEMENT, LA SPÉCIFICATION ET LA DÉFINITION DE :
-//    static void cbst__repr_graphic(const cbst *p,
-//      void (*put)(const void *ref), size_t level);
+static void cbst__repr_graphic(const cbst *p, void (*put)(const void *),
+    size_t level) {
+  if (IS_EMPTY(p)) {
+    printf("%*s|\n", (int) (level * REPR__TAB), "");
+    return;
+  }
+  cbst__repr_graphic(RIGHT(p), put, level + 1);
+  printf("%*s", (int) (level * REPR__TAB), "");
+  put(REF(p));
+  printf(" h=%zu\n", cbst__height(p));
+  cbst__repr_graphic(LEFT(p), put, level + 1);
+}
 
 //=== Type bst =================================================================
 
@@ -123,10 +189,26 @@ void bst_dispose(bst **tptr) {
   *tptr = nullptr;
 }
 
-//  ICI, PROCHAINEMENT, LES DÉFINITIONS DE :
-//    bst_add_endofpath
-//    bst_remove_climbup_left
-//    bst_search
+void *bst_add_endofpath(bst *t, const void *ref) {
+  if (ref == nullptr) {
+    return nullptr;
+  }
+  return cbst__add_endofpath(&t->root, ref, t->compar);
+}
+
+void *bst_remove_climbup_left(bst *t, const void *ref) {
+  if (ref == nullptr) {
+    return nullptr;
+  }
+  return cbst__remove_climbup_left(&t->root, ref, t->compar);
+}
+
+void *bst_search(bst *t, const void *ref) {
+  if (ref == nullptr) {
+    return nullptr;
+  }
+  return cbst__search(t->root, ref, t->compar);
+}
 
 size_t bst_size(bst *t) {
   return cbst__size(t->root);
@@ -144,8 +226,9 @@ size_t bst_distance(bst *t) {
 //    bst_number
 //    bst_rank
 
-//  ICI, PROCHAINEMENT, LA DÉFINITION DE :
-//    bst_repr_graphic
+void bst_repr_graphic(bst *t, void (*put)(const void *)) {
+  cbst__repr_graphic(t->root, put, 0);
+}
 
 //==============================================================================
 

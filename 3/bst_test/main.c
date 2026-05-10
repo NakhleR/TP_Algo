@@ -172,60 +172,60 @@ void put(const void *p) {
 
 opreturn add_eop(cntxt *context) {
   REF_VALUE(0, context, ref, x);
-  //OP_MSG("add '%d' to the " BST, x);
-  //void *rs = bst_search(context->t, ref);
-  //void *ra = bst_add_endofpath(context->t, ref);
-  //if (rs == nullptr) {
-  //if (ra == nullptr) {
-  //return OP_RETURN_CAPACITY_ERROR;
-  //}
-  //if (ra != ref
-  //|| bst_search(context->t, ref) != ref) {
-  //OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
-  //"search", "add", "when trying to add a new value");
-  //return OP_RETURN_EXIT;
-  //}
-  //if (context->verbose) {
-  //bst_repr_graphic(context->t, put);
-  //}
-  //} else {
-  //if (ra == nullptr
-  //|| scale_compar(ra, rs) != 0
-  //|| (rs = bst_search(context->t, ref)) == nullptr
-  //|| scale_compar(ra, rs) != 0) {
-  //OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
-  //"search", "add", "when trying to add a value already present");
-  //return OP_RETURN_EXIT;
-  //}
-  //OP_WRN("'%d' already in the " BST, x);
-  //}
+  OP_MSG("add '%d' to the " BST, x);
+  void *rs = bst_search(context->t, ref);
+  void *ra = bst_add_endofpath(context->t, ref);
+  if (rs == nullptr) {
+    if (ra == nullptr) {
+      return OP_RETURN_CAPACITY_ERROR;
+    }
+    if (ra != ref
+        || bst_search(context->t, ref) != ref) {
+      OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
+          "search", "add", "when trying to add a new value");
+      return OP_RETURN_EXIT;
+    }
+    if (context->verbose) {
+      bst_repr_graphic(context->t, put);
+    }
+  } else {
+    if (ra == nullptr
+        || scale_compar(ra, rs) != 0
+        || (rs = bst_search(context->t, ref)) == nullptr
+        || scale_compar(ra, rs) != 0) {
+      OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
+          "search", "add", "when trying to add a value already present");
+      return OP_RETURN_EXIT;
+    }
+    OP_WRN("'%d' already in the " BST, x);
+  }
   return OP_RETURN_SUCCESS;
 }
 
 opreturn rem_cul(cntxt *context) {
   REF_VALUE(0, context, ref, x);
-  //OP_MSG("remove '%d' to the " BST, x);
-  //void *rs = bst_search(context->t, ref);
-  //void *rr = bst_remove_climbup_left(context->t, ref);
-  //if (rs == nullptr) {
-  //if (rr != nullptr) {
-  //OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
-  //"search", "remove", "when trying to remove a value not present");
-  //return OP_RETURN_EXIT;
-  //}
-  //OP_WRN("'%d' not in the " BST, x);
-  //} else {
-  //if (rr == nullptr
-  //|| scale_compar(rr, rs) != 0
-  //|| bst_search(context->t, ref) != nullptr) {
-  //OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
-  //"search", "remove", "when trying to remove a present value");
-  //return OP_RETURN_EXIT;
-  //}
-  //if (context->verbose) {
-  //bst_repr_graphic(context->t, put);
-  //}
-  //}
+  OP_MSG("remove '%d' to the " BST, x);
+  void *rs = bst_search(context->t, ref);
+  void *rr = bst_remove_climbup_left(context->t, ref);
+  if (rs == nullptr) {
+    if (rr != nullptr) {
+      OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
+          "search", "remove", "when trying to remove a value not present");
+      return OP_RETURN_EXIT;
+    }
+    OP_WRN("'%d' not in the " BST, x);
+  } else {
+    if (rr == nullptr
+        || scale_compar(rr, rs) != 0
+        || bst_search(context->t, ref) != nullptr) {
+      OP_ERR(BST " module badly implemented (%s? %s?)\n\t%s",
+          "search", "remove", "when trying to remove a present value");
+      return OP_RETURN_EXIT;
+    }
+    if (context->verbose) {
+      bst_repr_graphic(context->t, put);
+    }
+  }
   return OP_RETURN_SUCCESS;
 }
 
@@ -245,13 +245,13 @@ opreturn rank(cntxt *context) {
 
 opreturn presence(cntxt *context) {
   REF_VALUE(0, context, __ref, __x);
-  //void *rs = bst_search(context->t, __ref);
-  //if (rs != nullptr && scale_compar(rs, __ref) != 0) {
-  //OP_ERR(BST " module badly implemented (%s?)", "search");
-  //return OP_RETURN_EXIT;
-  //}
-  //OP_MSG("presence of '%d' in the " BST " = %s", __x,
-  //rs == nullptr ? "false" : "true");
+  void *rs = bst_search(context->t, __ref);
+  if (rs != nullptr && scale_compar(rs, __ref) != 0) {
+    OP_ERR(BST " module badly implemented (%s?)", "search");
+    return OP_RETURN_EXIT;
+  }
+  OP_MSG("presence of '%d' in the " BST " = %s", __x,
+      rs == nullptr ? "false" : "true");
   return OP_RETURN_SUCCESS;
 }
 
@@ -265,8 +265,8 @@ DEFUN_BT_TO_SIZE_T(distance)
 DEFUN_BT_TO_SIZE_T(height)
 DEFUN_BT_TO_SIZE_T(size)
 
-opreturn repr_graphic([[maybe_unused]] cntxt *context) {
-  //bst_repr_graphic(context->t, put);
+opreturn repr_graphic(cntxt *context) {
+  bst_repr_graphic(context->t, put);
   return OP_RETURN_SUCCESS;
 }
 
