@@ -24,14 +24,8 @@ static size_t str_hashfun(const char *s);
 //  scptr_display : affiche sur la sortie standard *cptr, le caractère
 //    tabulation, la chaine de caractères pointée par s et la fin de ligne.
 //    Renvoie zéro en cas de succès, une valeur non nulle en cas d'échec.
-typedef struct {
-  const long int *overflow;
-  long int target;
-  long int max_words;
-  long int displayed;
-} context;
-
-static int scptr_display(context *ctx, const char *s, const long int *cptr);
+static int scptr_display(const long int *overflow, const char *s,
+    const long int *cptr);
 
 //  rfree : libère la zone mémoire pointée par ptr et renvoie zéro.
 static int rfree(void *ptr);
@@ -41,39 +35,17 @@ static int rfree(void *ptr);
 
 #define WORD_LENGTH_MAX 31
 
-int main(int argc, char *argv[]) {
-  int r = EXIT_SUCCESS;
-  long int *cnt = nullptr;
-  hashtable *ht = nullptr;
-  holdall *has = nullptr;
-  if (argc != 4) {
-    fprintf(stderr, "*** Error: Usage: %s BOUND VALUE MAX_WORDS\n", argv[0]);
-    goto error;
-  }
-  long int bound = strtol(argv[1], nullptr, 10);
-  long int target = strtol(argv[2], nullptr, 10);
-  long int max_words = strtol(argv[3], nullptr, 10);
-  if (bound < 1 || target < 1 || max_words < 0) {
-    fprintf(stderr,
-        "*** Error: BOUND >= 1, VALUE >= 1, MAX_WORDS >= 0 required\n");
-    goto error;
-  }
-  cnt = malloc((size_t) (bound + 2) * sizeof *cnt);
-  if (cnt == nullptr) {
-    goto error_capacity;
-  }
-  for (size_t k = 0; k < (size_t) (bound + 2); ++k) {
+#define BOUND 5
+
+int main() {
+  long int cnt[BOUND + 2];
+  for (size_t k = 0; k < sizeof cnt / sizeof *cnt; ++k) {
     cnt[k] = (long int) k;
   }
-  context ctx = {
-    .overflow = &cnt[bound + 1],
-    .target = target,
-    .max_words = max_words,
-    .displayed = 0,
-  };
-  ht = hashtable_empty((int (*)(const void *, const void *)) strcmp,
+  int r = EXIT_SUCCESS;
+  hashtable *ht = hashtable_empty((int (*)(const void *, const void *)) strcmp,
         (size_t (*)(const void *)) str_hashfun, 1.0);
-  has = holdall_empty();
+  holdall *has = holdall_empty();
   if (ht == nullptr
       || has == nullptr) {
     goto error_capacity;
@@ -85,7 +57,7 @@ int main(int argc, char *argv[]) {
     }
     long int *cptr = hashtable_search(ht, w);
     if (cptr != nullptr) {
-      if (*cptr <= bound) {
+      if (*cptr <= BOUND) {
         hashtable_add(ht, w, cptr + 1);
       }
     } else {
@@ -113,7 +85,7 @@ int main(int argc, char *argv[]) {
 #endif
   if (holdall_apply_context2(has,
         ht, (void *(*)(void *, void *)) hashtable_search,
-        &ctx,
+        &cnt[BOUND + 1],
         (int (*)(void *, void *, void *)) scptr_display) != 0) {
     goto error_write;
   }
@@ -139,7 +111,6 @@ dispose:
     holdall_apply(has, rfree);
   }
   holdall_dispose(&has);
-  free(cnt);
   return r;
 }
 
@@ -151,14 +122,11 @@ size_t str_hashfun(const char *s) {
   return h;
 }
 
-int scptr_display(context *ctx, const char *s, const long int *cptr) {
-  if (ctx->displayed >= ctx->max_words || *cptr != ctx->target) {
-    return 0;
-  }
-  if (cptr == ctx->overflow) {
+int scptr_display(const long int *overflow, const char *s,
+    const long int *cptr) {
+  if (cptr == overflow) {
     fprintf(stderr, "*** Warning: Counter overflow for word '%s'\n", s);
   }
-  ctx->displayed += 1;
   return printf("%ld\t%s\n", *cptr, s) < 0;
 }
 

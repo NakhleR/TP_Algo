@@ -116,9 +116,59 @@ int holdall_apply_context2(holdall *ha,
 
 #if defined HOLDALL_EXT && defined WANT_HOLDALL_EXT
 
-/*
- *  IMPLANTATION DE L'EXTENSION OPTIONNELLE
- */
+void holdall_sort(holdall *ha,
+    int (*compar)(const void *, const void *)) {
+  if (ha->head == nullptr || ha->head->next == nullptr) {
+    return;
+  }
+  size_t step = 1;
+  while (step < ha->count) {
+    choldall *p = ha->head;
+    choldall *tail = nullptr;
+    ha->head = nullptr;
+    while (p != nullptr) {
+      choldall *a = p;
+      choldall *b = a;
+      for (size_t k = 1; k < step && b->next != nullptr; ++k) {
+        b = b->next;
+      }
+      choldall *next = b->next;
+      b->next = nullptr;
+      b = next;
+      size_t bn = step;
+      while (a != nullptr || (b != nullptr && bn > 0)) {
+        choldall *t;
+        if (a == nullptr || (b != nullptr && bn > 0
+            && compar(b->ref, a->ref) < 0)) {
+          t = b;
+          b = b->next;
+          bn -= 1;
+        } else {
+          t = a;
+          a = a->next;
+        }
+        if (tail == nullptr) {
+          ha->head = t;
+        } else {
+          tail->next = t;
+        }
+        tail = t;
+      }
+      p = b;
+    }
+    if (tail != nullptr) {
+      tail->next = nullptr;
+    }
+    step *= 2;
+  }
+#if defined HOLDALL_PUT_TAIL
+  choldall **pp = &ha->head;
+  while (*pp != nullptr) {
+    pp = &(*pp)->next;
+  }
+  ha->tailptr = pp;
+#endif
+}
 
 #endif
 #endif

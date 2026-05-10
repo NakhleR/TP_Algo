@@ -26,12 +26,10 @@ static size_t str_hashfun(const char *s);
 //    Renvoie zéro en cas de succès, une valeur non nulle en cas d'échec.
 typedef struct {
   const long int *overflow;
-  long int target;
-  long int max_words;
-  long int displayed;
 } context;
 
-static int scptr_display(context *ctx, const char *s, const long int *cptr);
+static int scptr_display(const context *ctx, const char *s,
+    const long int *cptr);
 
 //  rfree : libère la zone mémoire pointée par ptr et renvoie zéro.
 static int rfree(void *ptr);
@@ -46,16 +44,13 @@ int main(int argc, char *argv[]) {
   long int *cnt = nullptr;
   hashtable *ht = nullptr;
   holdall *has = nullptr;
-  if (argc != 4) {
-    fprintf(stderr, "*** Error: Usage: %s BOUND VALUE MAX_WORDS\n", argv[0]);
+  if (argc != 2) {
+    fprintf(stderr, "*** Error: Usage: %s BOUND\n", argv[0]);
     goto error;
   }
   long int bound = strtol(argv[1], nullptr, 10);
-  long int target = strtol(argv[2], nullptr, 10);
-  long int max_words = strtol(argv[3], nullptr, 10);
-  if (bound < 1 || target < 1 || max_words < 0) {
-    fprintf(stderr,
-        "*** Error: BOUND >= 1, VALUE >= 1, MAX_WORDS >= 0 required\n");
+  if (bound < 1) {
+    fprintf(stderr, "*** Error: BOUND must be a positive integer\n");
     goto error;
   }
   cnt = malloc((size_t) (bound + 2) * sizeof *cnt);
@@ -67,9 +62,6 @@ int main(int argc, char *argv[]) {
   }
   context ctx = {
     .overflow = &cnt[bound + 1],
-    .target = target,
-    .max_words = max_words,
-    .displayed = 0,
   };
   ht = hashtable_empty((int (*)(const void *, const void *)) strcmp,
         (size_t (*)(const void *)) str_hashfun, 1.0);
@@ -151,14 +143,11 @@ size_t str_hashfun(const char *s) {
   return h;
 }
 
-int scptr_display(context *ctx, const char *s, const long int *cptr) {
-  if (ctx->displayed >= ctx->max_words || *cptr != ctx->target) {
-    return 0;
-  }
+int scptr_display(const context *ctx, const char *s,
+    const long int *cptr) {
   if (cptr == ctx->overflow) {
     fprintf(stderr, "*** Warning: Counter overflow for word '%s'\n", s);
   }
-  ctx->displayed += 1;
   return printf("%ld\t%s\n", *cptr, s) < 0;
 }
 

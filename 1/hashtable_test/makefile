@@ -5,7 +5,8 @@ CFLAGS = -std=c2x \
   -Wall -Wconversion -Werror -Wextra -Wpedantic -Wwrite-strings \
   -O2 \
   -I$(hashtable_dir) -I$(holdall_dir) \
-  -DxWANT_HASHTABLE_EXT
+  -DxWANT_HASHTABLE_EXT \
+  -DWANT_HOLDALL_EXT
 vpath %.c $(hashtable_dir) $(holdall_dir)
 vpath %.h $(hashtable_dir) $(holdall_dir)
 objects = main.o hashtable.o holdall.o

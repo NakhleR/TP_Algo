@@ -17,6 +17,6 @@
 //    ni le temps ni l'espace nécessaire à l'exécution des fonctions fun, fun1
 //    ou fun2 passées en paramètre : temps au plus linéaire ; espace constant.
 
-//#define HOLDALL_EXT
+#define HOLDALL_EXT
 
-//  holdall_sort : temps ... ; espace ...
+//  holdall_sort : temps O(n log n) ; espace constant.
